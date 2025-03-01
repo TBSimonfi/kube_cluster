@@ -1,3 +1,4 @@
+# filepath: /d:/Projects/kube_cluster/vagrant-kubeadm-kubernetes-main/Vagrantfile
 require "yaml"
 vagrant_root = File.dirname(File.expand_path(__FILE__))
 settings = YAML.load_file "#{vagrant_root}/settings.yaml"
@@ -24,6 +25,26 @@ Vagrant.configure("2") do |config|
     config.vm.box = settings["software"]["box"]
   end
   config.vm.box_check_update = true
+
+  config.vm.define "runner" do |runner|
+    runner.vm.hostname = "runner"
+    runner.vm.network "private_network", ip: settings["network"]["runner_ip"]
+    runner.vm.provider "virtualbox" do |vb|
+      vb.cpus = 2
+      vb.memory = 1024
+    end
+    runner.vm.provision "shell", path: "scripts/runner.sh"
+    runner.vm.provision "shell", inline: <<-SHELL
+      # Install kubectl
+      curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      chmod +x kubectl
+      sudo mv kubectl /usr/local/bin/
+
+      # Copy kubeconfig from shared folder
+      mkdir -p $HOME/.kube
+      cp /vagrant/configs/admin.conf $HOME/.kube/config
+    SHELL
+  end
 
   config.vm.define "controlplane" do |controlplane|
     controlplane.vm.hostname = "controlplane"
@@ -98,28 +119,5 @@ Vagrant.configure("2") do |config|
         node.vm.provision "shell", path: "scripts/dashboard.sh"
       end
     end
-  end
-
-  config.vm.define "runner" do |runner|
-    runner.vm.hostname = "runner"
-    runner.vm.network "private_network", ip: settings["network"]["runner_ip"]
-    runner.vm.provider "virtualbox" do |vb|
-      vb.cpus = 2
-      vb.memory = 1024
-    end
-    runner.vm.provision "shell", path: "scripts/runner.sh"
-    runner.vm.provision "shell", inline: <<-SHELL
-      # Install kubectl
-      curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-      chmod +x kubectl
-      sudo mv kubectl /usr/local/bin/
-
-      # Copy kubeconfig from shared folder
-      mkdir -p $HOME/.kube
-      cp /vagrant/configs/admin.conf $HOME/.kube/config
-
-      # Update kubeconfig to use the correct server endpoint
-      sed -i 's/localhost/kubernetes.default.svc/' $HOME/.kube/config
-    SHELL
   end
 end
