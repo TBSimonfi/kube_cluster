@@ -65,5 +65,5 @@ jobs:
         kubectl port-forward svc/argocd-server -n argocd 8080:443 &
         sleep 10
         argocd login localhost:8080 --username admin --password $(kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 --decode) --insecure
-        argocd app create apache --repo https://github.com/your-username/your-repo --path k8s/apache --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated
+        argocd app create apache --repo https://github.com/TBSimonfi/kube_cluster --path k8s/apache --dest-server https://kubernetes.default.svc --dest-namespace default --sync-policy automated
         argocd app sync apache
