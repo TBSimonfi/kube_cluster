@@ -1,5 +1,5 @@
 # Environment variables
-GITHUB_TOKEN="AJRTUPWBQD7TXEABKNSCTDDHYOJVM"
+GITHUB_TOKEN="AJRTUPSDJ3DMC2GULLTNM7THYOJZM"
 REPO_URL="https://github.com/TBSimonfi/kube_cluster"
 
 echo "Starting provisioning..."
