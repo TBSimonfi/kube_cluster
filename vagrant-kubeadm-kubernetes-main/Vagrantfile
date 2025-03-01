@@ -26,6 +26,16 @@ Vagrant.configure("2") do |config|
   end
   config.vm.box_check_update = true
 
+  config.vm.define "runner" do |runner|
+    runner.vm.hostname = "runner"
+    runner.vm.network "private_network", ip: settings["network"]["runner_ip"]
+    runner.vm.provider "virtualbox" do |vb|
+      vb.cpus = 2
+      vb.memory = 1024
+    end
+    node.vm.provision "shell", path: "scripts/runner.sh"
+  end
+
   config.vm.define "controlplane" do |controlplane|
     controlplane.vm.hostname = "controlplane"
     controlplane.vm.network "private_network", ip: settings["network"]["control_ip"]
@@ -60,16 +70,6 @@ Vagrant.configure("2") do |config|
         "SERVICE_CIDR" => settings["network"]["service_cidr"]
       },
       path: "scripts/master.sh"
-  end
-
-  config.vm.define "runner" do |runner|
-    runner.vm.hostname = "runner"
-    runner.vm.network "private_network", ip: settings["network"]["runner_ip"]
-    runner.vm.network "forwarded_port", guest: 8001, host: 8001
-    runner.vm.provider "virtualbox" do |vb|
-      vb.cpus = 2
-      vb.memory = 1024
-    end
   end
 
   (1..NUM_WORKER_NODES).each do |i|
