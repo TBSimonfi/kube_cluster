@@ -18,6 +18,6 @@ jobs:
         mkdir -p $HOME/.kube
         echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
 
-    - name: Deploy Apache
+    - name: Apply Argo CD Application
       run: |
-        kubectl apply -f k8s/apache-deployment.yml
+        kubectl apply -f argo-application.yml
