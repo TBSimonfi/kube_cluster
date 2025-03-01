@@ -1,4 +1,3 @@
-
 require "yaml"
 vagrant_root = File.dirname(File.expand_path(__FILE__))
 settings = YAML.load_file "#{vagrant_root}/settings.yaml"
@@ -34,6 +33,12 @@ Vagrant.configure("2") do |config|
       vb.memory = 1024
     end
     runner.vm.provision "shell", path: "scripts/runner.sh"
+    runner.vm.provision "shell", inline: <<-SHELL
+      # Install kubectl
+      curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      chmod +x kubectl
+      sudo mv kubectl /usr/local/bin/
+    SHELL
   end
 
   config.vm.define "controlplane" do |controlplane|
@@ -73,7 +78,6 @@ Vagrant.configure("2") do |config|
   end
 
   (1..NUM_WORKER_NODES).each do |i|
-
     config.vm.define "node0#{i}" do |node|
       node.vm.hostname = "node0#{i}"
       node.vm.network "private_network", ip: IP_NW + "#{IP_START + i}"
@@ -105,6 +109,5 @@ Vagrant.configure("2") do |config|
         node.vm.provision "shell", path: "scripts/dashboard.sh"
       end
     end
-
   end
-end 
+end
