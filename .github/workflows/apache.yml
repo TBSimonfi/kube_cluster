@@ -1,0 +1,23 @@
+name: Deploy Apache to Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up kubectl
+      run: |
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
+
+    - name: Deploy Apache
+      run: |
+        kubectl apply -f k8s/apache-deployment.yml

@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
       vb.cpus = 2
       vb.memory = 1024
     end
-    node.vm.provision "shell", path: "scripts/runner.sh"
+    runner.vm.provision "shell", path: "scripts/runner.sh"
   end
 
   config.vm.define "controlplane" do |controlplane|
