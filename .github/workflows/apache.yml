@@ -13,15 +13,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up kubectl
-      run: |
-        mkdir -p $HOME/.kube
-        echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
-
-    - name: Print kubeconfig file
-      run: |
-        cat $HOME/.kube/config
-
     - name: Verify kubeconfig file
       run: |
         export KUBECONFIG=$HOME/.kube/config
