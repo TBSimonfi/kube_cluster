@@ -38,10 +38,10 @@ jobs:
         export KUBECONFIG=$HOME/.kube/config
         kubectl cluster-info
 
-    - name: Create Argo CD namespace
+    - name: Create Argo CD namespace if not exists
       run: |
         export KUBECONFIG=$HOME/.kube/config
-        kubectl create namespace argocd
+        kubectl get namespace argocd || kubectl create namespace argocd
 
     - name: Install Argo CD CRDs
       run: |
