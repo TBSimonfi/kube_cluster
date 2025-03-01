@@ -23,6 +23,16 @@ jobs:
         export KUBECONFIG=$HOME/.kube/config
         kubectl config view
 
+    - name: Verify cluster context
+      run: |
+        export KUBECONFIG=$HOME/.kube/config
+        kubectl config current-context
+
+    - name: Verify cluster endpoint
+      run: |
+        export KUBECONFIG=$HOME/.kube/config
+        kubectl cluster-info
+
     - name: Apply Argo CD Application
       run: |
         export KUBECONFIG=$HOME/.kube/config
