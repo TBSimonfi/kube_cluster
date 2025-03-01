@@ -23,6 +23,11 @@ jobs:
         export KUBECONFIG=$HOME/.kube/config
         kubectl config view
 
+    - name: Set cluster context
+      run: |
+        export KUBECONFIG=$HOME/.kube/config
+        kubectl config use-context <your-context-name>
+
     - name: Verify cluster context
       run: |
         export KUBECONFIG=$HOME/.kube/config
