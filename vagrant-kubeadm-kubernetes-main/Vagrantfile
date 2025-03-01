@@ -1,3 +1,4 @@
+# filepath: /d:/Projects/kube_cluster/vagrant-kubeadm-kubernetes-main/Vagrantfile
 require "yaml"
 vagrant_root = File.dirname(File.expand_path(__FILE__))
 settings = YAML.load_file "#{vagrant_root}/settings.yaml"
@@ -38,6 +39,10 @@ Vagrant.configure("2") do |config|
       curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
       chmod +x kubectl
       sudo mv kubectl /usr/local/bin/
+
+      # Copy kubeconfig from shared folder
+      mkdir -p $HOME/.kube
+      cp /vagrant/configs/admin.conf $HOME/.kube/config
     SHELL
   end
 
@@ -75,6 +80,11 @@ Vagrant.configure("2") do |config|
         "SERVICE_CIDR" => settings["network"]["service_cidr"]
       },
       path: "scripts/master.sh"
+    controlplane.vm.provision "shell", inline: <<-SHELL
+      # Save kubeconfig to shared folder
+      mkdir -p /vagrant/configs
+      cp /etc/kubernetes/admin.conf /vagrant/configs/admin.conf
+    SHELL
   end
 
   (1..NUM_WORKER_NODES).each do |i|
