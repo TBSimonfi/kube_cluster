@@ -48,7 +48,16 @@ jobs:
         export KUBECONFIG=$HOME/.kube/config
         kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 
-    - name: Apply Argo CD Application
+    - name: Create Argo CD Application for Apache
       run: |
         export KUBECONFIG=$HOME/.kube/config
         kubectl apply -f k8s/argo-application.yml --validate=false
+
+    - name: Sync Argo CD Application
+      run: |
+        export KUBECONFIG=$HOME/.kube/config
+        kubectl -n argocd wait --for=condition=available --timeout=600s deployment/argocd-server
+        kubectl port-forward svc/argocd-server -n argocd 8080:443 &
+        sleep 10
+        argocd login localhost:8080 --username admin --password $(kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 --decode) --insecure
+        argocd app sync apache
