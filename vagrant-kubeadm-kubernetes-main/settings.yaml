@@ -11,6 +11,7 @@ cluster_name: Kubernetes Cluster
 network:
   # Worker IPs are simply incremented from the control IP.
   control_ip: 10.0.0.10
+  runner_ip: 10.0.0.50
   dns_servers:
     - 8.8.8.8
     - 1.1.1.1

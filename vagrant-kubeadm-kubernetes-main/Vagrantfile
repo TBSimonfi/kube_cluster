@@ -30,6 +30,7 @@ Vagrant.configure("2") do |config|
     controlplane.vm.hostname = "controlplane"
     controlplane.vm.network "private_network", ip: settings["network"]["control_ip"]
     controlplane.vm.network "forwarded_port", guest: 8001, host: 8001
+    controlplane.vm.network "forwarded_port", guest: 6443, host: 6443
     if settings["shared_folders"]
       settings["shared_folders"].each do |shared_folder|
         controlplane.vm.synced_folder shared_folder["host_path"], shared_folder["vm_path"]
@@ -59,6 +60,16 @@ Vagrant.configure("2") do |config|
         "SERVICE_CIDR" => settings["network"]["service_cidr"]
       },
       path: "scripts/master.sh"
+  end
+
+  config.vm.define "runner" do |runner|
+    runner.vm.hostname = "runner"
+    runner.vm.network "private_network", ip: settings["network"]["runner_ip"]
+    runner.vm.network "forwarded_port", guest: 8001, host: 8001
+    runner.vm.provider "virtualbox" do |vb|
+      vb.cpus = 2
+      vb.memory = 1024
+    end
   end
 
   (1..NUM_WORKER_NODES).each do |i|
