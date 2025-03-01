@@ -20,4 +20,4 @@ jobs:
 
     - name: Apply Argo CD Application
       run: |
-        kubectl apply -f ../k8s/argo-application.yml
+        kubectl apply -f argo-application.yml
