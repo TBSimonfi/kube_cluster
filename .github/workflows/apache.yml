@@ -38,6 +38,11 @@ jobs:
         export KUBECONFIG=$HOME/.kube/config
         kubectl cluster-info
 
+    - name: Install Argo CD CRDs
+      run: |
+        export KUBECONFIG=$HOME/.kube/config
+        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
     - name: Apply Argo CD Application
       run: |
         export KUBECONFIG=$HOME/.kube/config
