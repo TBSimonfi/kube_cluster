@@ -1,5 +1,5 @@
 # Environment variables
-GITHUB_TOKEN="AJRTUPSBWONY56XFOC6QWCDHXX6UQ"
+GITHUB_TOKEN="AJRTUPSWY6GOROX3DL3AEN3HYNXOA"
 REPO_URL="https://github.com/TBSimonfi/test_repo"
 
 echo "Starting provisioning..."
