@@ -18,6 +18,12 @@ jobs:
         mkdir -p $HOME/.kube
         echo "${{ secrets.KUBECONFIG }}" | base64 --decode > $HOME/.kube/config
 
+    - name: Verify kubeconfig file
+      run: |
+        export KUBECONFIG=$HOME/.kube/config
+        kubectl config view
+
     - name: Apply Argo CD Application
       run: |
-        kubectl apply -f k8s/argo-application.yml
+        export KUBECONFIG=$HOME/.kube/config
+        kubectl apply -f k8s/argo-application.yml --validate=false
